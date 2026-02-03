@@ -16,7 +16,6 @@
       --ok: #22c55e;
       --no: #ef4444;
       --radius: 16px;
-      --shadow: 0 12px 40px rgba(0,0,0,.35);
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
@@ -74,9 +73,9 @@
   <div class="brand">SEC<span>CO</span></div>
 
   <div class="score-card" id="mainScoreCard">
-    <div class="score-label">INDICE DE SALUD TECNICA</div>
+    <div class="score-label">INDICE DE SALUD TÉCNICA</div>
     <div class="score-number" id="scoreNum">--%</div>
-    <div id="verdictStatus" class="verdict-box">INSPECCION EN CURSO</div>
+    <div id="verdictStatus" class="verdict-box">INSPECCIÓN EN CURSO</div>
   </div>
 
   <div class="meta-grid">
@@ -86,7 +85,7 @@
         <option value="" disabled selected>Seleccionar...</option>
         <option value="JLLJ99-Berlingo">JLLJ99-Berlingo</option>
         <option value="KLVS61-Berlingo">KLVS61-Berlingo</option>
-        <option value="FGGB68-Partner">FGGB68-Partner</option>
+        <option value="FGGB68-Partner">FGGB78-Partner</option>
         <option value="NB5462-Swift">NB5462-Swift</option>
       </select>
     </div>
@@ -135,11 +134,8 @@
     <div class="section-tag">4. Frenos</div>
     <div class="check-row"><span>Pedal firme</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
     <div class="check-row"><span>Frenado parejo</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Sin vibración al frenar</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Sin ruidos al frenar</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Pastillas delanteras</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buenas</div><div class="pill" data-pts="5" onclick="sel(this)">Medias</div><div class="pill" data-pts="0" onclick="sel(this)">Gastadas</div></div></div>
-    <div class="check-row"><span>Pastillas traseras</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buenas</div><div class="pill" data-pts="5" onclick="sel(this)">Medias</div><div class="pill" data-pts="0" onclick="sel(this)">Gastadas</div></div></div>
-    <div class="check-row"><span>Discos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="5" onclick="sel(this)">Rayados</div><div class="pill" data-pts="0" onclick="sel(this)">Reborde</div></div></div>
+    <div class="check-row"><span>Pastillas delanteras</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buenas</div><div class="pill" data-pts="0" onclick="sel(this)">Gastadas</div></div></div>
+    <div class="check-row"><span>Pastillas traseras</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buenas</div><div class="pill" data-pts="0" onclick="sel(this)">Gastadas</div></div></div>
     <div class="check-row"><span>Freno mano retiene</span><div class="selector"><div class="pill" data-pts="20" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
     <textarea class="textarea" id="obs_frenos" placeholder="Observaciones de frenos..."></textarea>
   </section>
@@ -147,29 +143,21 @@
   <section class="section-block">
     <div class="section-tag">5. Neumáticos</div>
     <div class="check-row"><span>Presión correcta</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Desgaste parejo</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Desgaste irregular</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
     <div class="check-row"><span>Tajo / Hernias</span><div class="selector"><div class="pill" data-pts="20" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
-    <div class="check-row"><span>Profundidad dibujo</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buena</div><div class="pill" data-pts="5" onclick="sel(this)">Media</div><div class="pill" data-pts="0" onclick="sel(this)">Baja</div></div></div>
     <div class="check-row"><span>Tuercas firmes</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Repuesto</span><div class="selector"><div class="pill" data-pts="5" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">No</div><div class="pill" data-pts="5" onclick="sel(this)">N/A</div></div></div>
     <textarea class="textarea" id="obs_neumaticos" placeholder="Observaciones de neumáticos..."></textarea>
   </section>
 
   <section class="section-block">
     <div class="section-tag">6. Eléctrico Básico</div>
-    <div class="check-row"><span>Bajas / Altas</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Falla</div></div></div>
-    <div class="check-row"><span>Intermitentes</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Falla</div></div></div>
-    <div class="check-row"><span>Luces freno</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Falla</div></div></div>
+    <div class="check-row"><span>Luces (Todas)</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Falla</div></div></div>
     <div class="check-row"><span>Bocina</span><div class="selector"><div class="pill" data-pts="5" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Falla</div></div></div>
     <textarea class="textarea" id="obs_electrico" placeholder="Observaciones de sistema eléctrico..."></textarea>
   </section>
 
   <section class="section-block">
-    <div class="section-tag">7. Sueltos / Defectuosos</div>
-    <div class="check-row"><span>Plásticos / Cubre motor</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Suelto</div></div></div>
-    <div class="check-row"><span>Broches faltantes</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
-    <div class="check-row"><span>Escape / Ruido</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Suelto</div></div></div>
+    <div class="section-tag">7. Otros</div>
+    <div class="check-row"><span>Piezas sueltas / Ruidos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
     <textarea class="textarea" id="obs_otros" placeholder="Otros defectos detectados..."></textarea>
   </section>
 
@@ -179,6 +167,7 @@
 </div>
 
 <script>
+  // REEMPLAZA CON TU URL DE DESPLIEGUE REAL
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLk4Y-UKAvyTYsZDpFrJzjmFV0bBldUOOalHmPyo4m-yrq8PTMLxiM45tce7U0FaTDg/exec';
 
   function sel(e) {
@@ -191,7 +180,9 @@
     const total = document.querySelectorAll('.selector').length;
     const answered = document.querySelectorAll('.pill.active').length;
     const btn = document.getElementById('btnSubmit');
-    const metaOk = document.getElementById('unidad').value && document.getElementById('km').value && document.getElementById('mecanico').value;
+    const metaOk = document.getElementById('unidad').value && 
+                   document.getElementById('km').value && 
+                   document.getElementById('mecanico').value;
 
     if (answered === total && metaOk) {
       calculateScore();
@@ -220,40 +211,51 @@
     document.getElementById('mainScoreCard').classList.add('revealed');
     num.innerText = percent + '%';
 
-    if (percent >= 92) { verd.innerText = "APTO PARA SALIR"; verd.style.color = "var(--ok)"; num.style.color = "var(--ok)"; }
-    else if (percent >= 75) { verd.innerText = "APTO CON OBSERVACION"; verd.style.color = "var(--brand)"; num.style.color = "var(--brand)"; }
-    else { verd.innerText = "NO APTO - REPARACION URGENTE"; verd.style.color = "var(--no)"; num.style.color = "var(--no)"; }
+    if (percent >= 92) { 
+      verd.innerText = "APTO PARA SALIR"; 
+      verd.style.color = "var(--ok)"; 
+      num.style.color = "var(--ok)"; 
+    } else if (percent >= 75) { 
+      verd.innerText = "APTO CON OBSERVACIÓN"; 
+      verd.style.color = "var(--brand)"; 
+      num.style.color = "var(--brand)"; 
+    } else { 
+      verd.innerText = "NO APTO - REPARACIÓN URGENTE"; 
+      verd.style.color = "var(--no)"; 
+      num.style.color = "var(--no)"; 
+    }
   }
 
   async function finalizar() {
     const btn = document.getElementById('btnSubmit');
+    const saludPercent = document.getElementById('scoreNum').innerText;
+    
     btn.innerText = "ENVIANDO REPORTE...";
     btn.disabled = true;
 
     const data = {
+      fecha: new Date().toLocaleString('es-CL'),
       unidad: document.getElementById('unidad').value,
       km: document.getElementById('km').value,
       mecanico: document.getElementById('mecanico').value,
-      salud: document.getElementById('scoreNum').innerText,
+      salud: saludPercent,
       veredicto: document.getElementById('verdictStatus').innerText,
-      observaciones: {
-        fugas: document.getElementById('obs_fugas').value,
-        motor: document.getElementById('obs_motor').value,
-        frenos: document.getElementById('obs_frenos').value,
-        neumaticos: document.getElementById('obs_neumaticos').value,
-        electrico: document.getElementById('obs_electrico').value,
-        otros: document.getElementById('obs_otros').value
-      },
-      fecha: new Date().toLocaleString('es-CL')
+      obs_fugas: document.getElementById('obs_fugas').value,
+      obs_motor: document.getElementById('obs_motor').value,
+      obs_frenos: document.getElementById('obs_frenos').value,
+      obs_neumaticos: document.getElementById('obs_neumaticos').value,
+      obs_electrico: document.getElementById('obs_electrico').value,
+      obs_otros: document.getElementById('obs_otros').value
     };
 
     try {
       await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-      alert("Informe registrado correctamente.");
+      alert("✅ Informe registrado correctamente.\nSalud de la unidad: " + saludPercent);
       location.reload();
     } catch (e) {
-      alert("Error al conectar con el servidor.");
+      alert("❌ Error al conectar con el servidor.");
       btn.disabled = false;
+      btn.innerText = "REINTENTAR";
     }
   }
 </script>
