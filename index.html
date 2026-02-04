@@ -27,7 +27,6 @@
     .brand { font-weight: 800; font-size: 22px; margin-bottom: 20px; letter-spacing: -1px; }
     .brand span { color: var(--brand); }
 
-    /* Score Card */
     .score-card {
       background: linear-gradient(145deg, var(--card-2), rgba(0,0,0,0.4));
       border: 1px solid var(--line);
@@ -47,7 +46,20 @@
     .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 25px; }
     .meta-input { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
     .meta-input label { display: block; font-size: 9px; color: var(--brand); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
-    .meta-input input { width: 100%; background: transparent; border: none; color: var(--text); font-weight: 700; outline: none; }
+    
+    /* Estilo para los selectores desplegables */
+    .meta-select, .meta-input input { 
+      width: 100%; 
+      background: transparent; 
+      border: none; 
+      color: var(--text); 
+      font-weight: 700; 
+      outline: none; 
+      font-family: var(--font);
+      font-size: 15px;
+      appearance: none;
+    }
+    option { background: #1a1a1e; color: #fff; }
 
     .section-block { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 25px; }
     .section-tag { color: var(--brand); font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
@@ -81,9 +93,30 @@
   </div>
 
   <div class="meta-grid">
-    <div class="meta-input"><label>Unidad / Patente</label><input type="text" id="unidad" placeholder="AB-123-CD"></div>
-    <div class="meta-input"><label>Kilometraje</label><input type="number" id="km" placeholder="000000"></div>
-    <div class="meta-input"><label>Mecánico / Conductor</label><input type="text" id="conductor" placeholder="Nombre"></div>
+    <div class="meta-input">
+      <label>Unidad / Patente</label>
+      <select class="meta-select" id="unidad" onchange="checkIntegrity()">
+        <option value="" disabled selected>Seleccionar...</option>
+        <option value="JLLJ99-Berlingo">JLLJ99-Berlingo</option>
+        <option value="KLVS61-Berlingo">KLVS61-Berlingo</option>
+        <option value="FGGB68-Partner">FGGB68-Partner</option>
+        <option value="NB5462-Swift">NB5462-Swift</option>
+      </select>
+    </div>
+    <div class="meta-input">
+      <label>Kilometraje</label>
+      <input type="number" id="km" placeholder="000000" oninput="checkIntegrity()">
+    </div>
+    <div class="meta-input">
+      <label>Mecánico / Conductor</label>
+      <select class="meta-select" id="conductor" onchange="checkIntegrity()">
+        <option value="" disabled selected>Seleccionar...</option>
+        <option value="Maverick Novoa">Maverick Novoa</option>
+        <option value="Felipe Torres">Felipe Torres</option>
+        <option value="Héctor Vejar">Héctor Vejar</option>
+        <option value="Fernando Leal">Fernando Leal</option>
+      </select>
+    </div>
   </div>
 
   <section class="section-block">
@@ -142,7 +175,6 @@
 </div>
 
 <script>
-  // URL de tu Apps Script
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLk4Y-UKAvyTYsZDpFrJzjmFV0bBldUOOalHmPyo4m-yrq8PTMLxiM45tce7U0FaTDg/exec';
 
   function sel(e) {
@@ -155,14 +187,21 @@
     const total = document.querySelectorAll('.selector').length;
     const answered = document.querySelectorAll('.pill.active').length;
     const btn = document.getElementById('btnSubmit');
+    
+    // Validación de que los selectores y el KM tengan valor
+    const unidad = document.getElementById('unidad').value;
+    const km = document.getElementById('km').value;
+    const conductor = document.getElementById('conductor').value;
 
-    if (answered === total) {
+    if (answered === total && unidad && km && conductor) {
       calculateScore();
       btn.disabled = false;
       btn.className = "btn-submit ready";
       btn.innerText = "FINALIZAR Y REGISTRAR";
     } else {
       btn.innerText = "PENDIENTE: " + (total - answered) + " PUNTOS";
+      btn.disabled = true;
+      btn.className = "btn-submit";
     }
   }
 
@@ -201,15 +240,10 @@
   }
 
   async function finalizar() {
-    const unidad = document.getElementById('unidad').value.trim();
-    const km = document.getElementById('km').value.trim();
-    const conductor = document.getElementById('conductor').value.trim();
+    const unidad = document.getElementById('unidad').value;
+    const km = document.getElementById('km').value;
+    const conductor = document.getElementById('conductor').value;
     const porcentajeSalud = document.getElementById('scoreNum').innerText;
-
-    if (!unidad || !km) { 
-      alert("⚠️ Error: Patente y Kilometraje son obligatorios."); 
-      return; 
-    }
 
     const btn = document.getElementById('btnSubmit');
     btn.innerText = "🚀 ENVIANDO A LA NUBE...";
@@ -225,7 +259,7 @@
     const data = {
       unidad: unidad,
       km: km,
-      conductor: conductor || "No especificado",
+      conductor: conductor,
       salud: porcentajeSalud,
       veredicto: document.getElementById('verdictStatus').innerText,
       obs_fugas: document.getElementById('obs_fugas').value,
@@ -245,7 +279,6 @@
       location.reload(); 
 
     } catch (e) {
-      console.error("Error de envío:", e);
       alert("❌ Error de conexión. Intente nuevamente.");
       btn.disabled = false;
       btn.innerText = "REINTENTAR";
