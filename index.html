@@ -16,7 +16,6 @@
       --ok: #22c55e;
       --no: #ef4444;
       --radius: 16px;
-      --shadow: 0 12px 40px rgba(0,0,0,.35);
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
@@ -43,22 +42,17 @@
     .score-number { font-size: 64px; font-weight: 800; line-height: 1; margin: 5px 0; color: var(--muted); }
     .verdict-box { margin-top: 10px; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase; background: rgba(255,255,255,0.03); border: 1px solid var(--line); }
 
-    .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 25px; }
+    /* Meta-grid ajustado a 2 columnas por nivel */
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
     .meta-input { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
     .meta-input label { display: block; font-size: 9px; color: var(--brand); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
     
-    /* Estilo para los selectores desplegables */
     .meta-select, .meta-input input { 
-      width: 100%; 
-      background: transparent; 
-      border: none; 
-      color: var(--text); 
-      font-weight: 700; 
-      outline: none; 
-      font-family: var(--font);
-      font-size: 15px;
-      appearance: none;
+      width: 100%; background: transparent; border: none; color: var(--text); 
+      font-weight: 700; outline: none; font-family: var(--font); font-size: 15px; appearance: none;
     }
+    input[type="date"] { color-scheme: dark; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; }
     option { background: #1a1a1e; color: #fff; }
 
     .section-block { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 25px; }
@@ -78,7 +72,11 @@
     .btn-submit { width: 100%; max-width: 450px; background: var(--card-2); color: var(--muted); border: none; padding: 20px; border-radius: 14px; font-weight: 800; text-transform: uppercase; cursor: not-allowed; font-size: 14px; }
     .btn-submit.ready { background: var(--brand); color: #000; cursor: pointer; box-shadow: 0 8px 24px rgba(255,210,0,0.2); }
 
-    @media (max-width: 600px) { .check-row { flex-direction: column; align-items: flex-start; gap: 10px; } .selector { justify-content: flex-start; width: 100%; } }
+    @media (max-width: 600px) { 
+      .meta-grid { grid-template-columns: 1fr; }
+      .check-row { flex-direction: column; align-items: flex-start; gap: 10px; } 
+      .selector { justify-content: flex-start; width: 100%; } 
+    }
   </style>
 </head>
 <body>
@@ -87,12 +85,16 @@
   <div class="brand">SEC<span>CO</span></div>
 
   <div class="score-card" id="mainScoreCard">
-    <div class="score-label" id="scoreTitle">Evaluación del Sistema</div>
+    <div class="score-label">Evaluación del Sistema</div>
     <div class="score-number" id="scoreNum">--%</div>
     <div id="verdictStatus" class="verdict-box">Inspección Incompleta</div>
   </div>
 
   <div class="meta-grid">
+    <div class="meta-input">
+      <label>Fecha de Inspección</label>
+      <input type="date" id="fecha_inspeccion" onchange="checkIntegrity()">
+    </div>
     <div class="meta-input">
       <label>Unidad / Patente</label>
       <select class="meta-select" id="unidad" onchange="checkIntegrity()">
@@ -121,51 +123,31 @@
 
   <section class="section-block">
     <div class="section-tag">1. Niveles (Rápido)</div>
-    <div class="check-row"><span>Aceite motor</span><div class="selector"><div class="pill" data-pts="5" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
-    <div class="check-row"><span>Refrigerante</span><div class="selector"><div class="pill" data-pts="5" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
-    <div class="check-row"><span>Líquido frenos</span><div class="selector"><div class="pill" data-pts="5" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
+    <div class="check-row"><span>Aceite motor</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
+    <div class="check-row"><span>Refrigerante</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
+    <div class="check-row"><span>Líquido frenos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
   </section>
 
   <section class="section-block">
     <div class="section-tag">2. Fugas</div>
-    <div class="check-row"><span>Fuga aceite motor</span><div class="selector"><div class="pill" data-pts="60" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
-    <div class="check-row"><span>Fuga refrigerante</span><div class="selector"><div class="pill" data-pts="60" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
-    <div class="check-row"><span>Fuga caja/transmisión</span><div class="selector"><div class="pill" data-pts="60" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <div class="check-row"><span>Fuga aceite motor</span><div class="selector"><div class="pill" data-pts="30" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <div class="check-row"><span>Fuga refrigerante</span><div class="selector"><div class="pill" data-pts="20" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <div class="check-row"><span>Fuga caja/transmisión</span><div class="selector"><div class="pill" data-pts="30" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
     <textarea class="textarea" id="obs_fugas" placeholder="Observaciones de fugas..."></textarea>
   </section>
 
   <section class="section-block">
     <div class="section-tag">3. Motor</div>
     <div class="check-row"><span>Arranque normal</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Motor regula parejo</span><div class="selector"><div class="pill" data-pts="5" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Ruidos anómalos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
-    <div class="check-row"><span>Vibración excesiva</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <div class="check-row"><span>Motor regula parejo</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
+    <div class="check-row"><span>Ruidos anómalos</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
   </section>
 
   <section class="section-block">
-    <div class="section-tag">4. Frenos</div>
-    <div class="check-row"><span>Pedal firme</span><div class="selector"><div class="pill" data-pts="20" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Frenado parejo</span><div class="selector"><div class="pill" data-pts="20" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Pastillas </span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buenas</div><div class="pill" data-pts="5" onclick="sel(this)">Medias</div><div class="pill" data-pts="0" onclick="sel(this)">Bajas</div></div></div>
-    <div class="check-row"><span>Freno mano retiene</span><div class="selector"><div class="pill" data-pts="30" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-  </section>
-
-  <section class="section-block">
-    <div class="section-tag">5. Neumáticos</div>
-    <div class="check-row"><span>Tajos/Huevos</span><div class="selector"><div class="pill" data-pts="0" onclick="sel(this)">Sí</div><div class="pill" data-pts="10" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Tuercas firmes</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
-    <div class="check-row"><span>Presión</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buena</div><div class="pill" data-pts="0" onclick="sel(this)">Mala</div></div></div>	
-  </section>
-
-  <section class="section-block">
-    <div class="section-tag">6. Eléctrico Básico</div>
-    <div class="check-row"><span>Luces Delanteras</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Falla</div></div></div>
-    <div class="check-row"><span>Luces Traseras</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Falla</div></div></div>
-  </section>
-
-  <section class="section-block">
-    <div class="section-tag">7. Otros</div>
-    <div class="check-row"><span>Piezas sueltas (General)</span><div class="selector"><div class="pill" data-pts="20" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <div class="section-tag">4. Frenos y Otros</div>
+    <div class="check-row"><span>Pedal firme</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
+    <div class="check-row"><span>Pastillas</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buenas</div><div class="pill" data-pts="5" onclick="sel(this)">Medias</div><div class="pill" data-pts="0" onclick="sel(this)">Bajas</div></div></div>
+    <div class="check-row"><span>Presión Neumáticos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buena</div><div class="pill" data-pts="0" onclick="sel(this)">Mala</div></div></div>
     <textarea class="textarea" id="obs_sueltos" placeholder="Otros defectos..."></textarea>
   </section>
 
@@ -175,7 +157,12 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLk4Y-UKAvyTYsZDpFrJzjmFV0bBldUOOalHmPyo4m-yrq8PTMLxiM45tce7U0FaTDg/exec';
+  const SCRIPT_URL = 'TU_URL_DE_APPS_SCRIPT_AQUI';
+
+  window.onload = function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha_inspeccion').value = today;
+  };
 
   function sel(e) {
     e.parentElement.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
@@ -187,13 +174,12 @@
     const total = document.querySelectorAll('.selector').length;
     const answered = document.querySelectorAll('.pill.active').length;
     const btn = document.getElementById('btnSubmit');
-    
-    // Validación de que los selectores y el KM tengan valor
+    const fecha = document.getElementById('fecha_inspeccion').value;
     const unidad = document.getElementById('unidad').value;
     const km = document.getElementById('km').value;
     const conductor = document.getElementById('conductor').value;
 
-    if (answered === total && unidad && km && conductor) {
+    if (answered === total && unidad && km && conductor && fecha) {
       calculateScore();
       btn.disabled = false;
       btn.className = "btn-submit ready";
@@ -206,61 +192,37 @@
   }
 
   function calculateScore() {
-    let current = 0;
-    let max = 0;
-    
+    let current = 0, max = 0;
     document.querySelectorAll('.selector').forEach(sel => {
       const pts = Array.from(sel.querySelectorAll('.pill')).map(p => parseInt(p.getAttribute('data-pts')));
       max += Math.max(...pts);
     });
-
     document.querySelectorAll('.pill.active').forEach(a => current += parseInt(a.getAttribute('data-pts')));
-
     const percent = Math.round((current / max) * 100);
-    const scoreCard = document.getElementById('mainScoreCard');
-    const scoreNum = document.getElementById('scoreNum');
-    const verdict = document.getElementById('verdictStatus');
-
-    scoreCard.classList.add('revealed');
+    const scoreNum = document.getElementById('scoreNum'), verdict = document.getElementById('verdictStatus');
+    document.getElementById('mainScoreCard').classList.add('revealed');
     scoreNum.innerText = percent + '%';
-
-    if (percent >= 92) {
-      verdict.innerText = "✓ APTO PARA SALIR";
-      verdict.style.color = "var(--ok)";
-      scoreNum.style.color = "var(--ok)";
-    } else if (percent >= 75) {
-      verdict.innerText = "⚠ APTO CON OBSERVACIÓN";
-      verdict.style.color = "var(--brand)";
-      scoreNum.style.color = "var(--brand)";
-    } else {
-      verdict.innerText = "✕ NO APTO - REPARACIÓN URGENTE";
-      verdict.style.color = "var(--no)";
-      scoreNum.style.color = "var(--no)";
-    }
+    if (percent >= 92) { verdict.innerText = "✓ APTO PARA SALIR"; verdict.style.color = "var(--ok)"; scoreNum.style.color = "var(--ok)"; }
+    else if (percent >= 75) { verdict.innerText = "⚠ APTO CON OBSERVACIÓN"; verdict.style.color = "var(--brand)"; scoreNum.style.color = "var(--brand)"; }
+    else { verdict.innerText = "✕ NO APTO - REPARACIÓN URGENTE"; verdict.style.color = "var(--no)"; scoreNum.style.color = "var(--no)"; }
   }
 
   async function finalizar() {
-    const unidad = document.getElementById('unidad').value;
-    const km = document.getElementById('km').value;
-    const conductor = document.getElementById('conductor').value;
-    const porcentajeSalud = document.getElementById('scoreNum').innerText;
-
     const btn = document.getElementById('btnSubmit');
-    btn.innerText = "ENVIANDO A LA NUBE...";
+    btn.innerText = "🚀 ENVIANDO...";
     btn.disabled = true;
 
     const respuestasDetalle = {};
     document.querySelectorAll('.selector').forEach(s => {
-      const label = s.parentElement.querySelector('span').innerText;
-      const valor = s.querySelector('.pill.active').innerText;
-      respuestasDetalle[label] = valor;
+      respuestasDetalle[s.parentElement.querySelector('span').innerText] = s.querySelector('.pill.active').innerText;
     });
 
     const data = {
-      unidad: unidad,
-      km: km,
-      conductor: conductor,
-      salud: porcentajeSalud,
+      fecha: document.getElementById('fecha_inspeccion').value + " " + new Date().toLocaleTimeString('it-IT'),
+      unidad: document.getElementById('unidad').value,
+      km: document.getElementById('km').value,
+      conductor: document.getElementById('conductor').value,
+      salud: document.getElementById('scoreNum').innerText,
       veredicto: document.getElementById('verdictStatus').innerText,
       obs_fugas: document.getElementById('obs_fugas').value,
       obs_otros: document.getElementById('obs_sueltos').value,
@@ -268,23 +230,15 @@
     };
 
     try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-
-      alert("✅ Registro guardado exitosamente.\n\nUnidad: " + unidad + "\nEstado de Salud: " + porcentajeSalud);
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      alert("✅ Registro guardado exitosamente.");
       location.reload(); 
-
     } catch (e) {
-      alert("❌ Error de conexión. Intente nuevamente.");
+      alert("❌ Error de conexión.");
       btn.disabled = false;
       btn.innerText = "REINTENTAR";
     }
   }
 </script>
-
 </body>
 </html>
