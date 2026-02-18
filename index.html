@@ -164,31 +164,60 @@
     checkIntegrity();
   }
 
-  function checkIntegrity() {
-    const unidad = document.getElementById('unidad').value;
-    const km = document.getElementById('km').value;
-    const cond = document.getElementById('conductor').value;
-    const answered = document.querySelectorAll('.pill.active').length;
+ function checkIntegrity() {
     const total = document.querySelectorAll('.selector').length;
+    const answered = document.querySelectorAll('.pill.active').length;
     const btn = document.getElementById('btnSubmit');
+    
+    const u = document.getElementById('unidad').value;
+    const k = document.getElementById('km').value;
+    const c = document.getElementById('conductor').value;
 
-    if (unidad && km && cond && answered === total) {
-      calculateScore();
+    if (answered === total && u && k && c) {
+      calculateScore(); // Llama al cálculo cuando todo está listo
       btn.disabled = false;
       btn.className = "btn-submit ready";
-      btn.innerText = "REGISTRAR INSPECCIÓN";
+      btn.innerText = "FINALIZAR Y REGISTRAR";
     } else {
       btn.disabled = true;
       btn.className = "btn-submit";
-      btn.innerText = "FALTAN DATOS";
+      btn.innerText = "PENDIENTE: " + (total - answered) + " PUNTOS";
     }
   }
 
+  // 2. PEGA AQUÍ LA FUNCIÓN DE CÁLCULO DE PUNTAJE
   function calculateScore() {
+    let current = 0;
+    let max = 0;
+
+    document.querySelectorAll('.selector').forEach(s => {
+      const pointsArray = Array.from(s.querySelectorAll('.pill')).map(p => 
+        parseInt(p.getAttribute('data-pts')) || 0
+      );
+      max += Math.max(...pointsArray);
+    });
+
+    document.querySelectorAll('.pill.active').forEach(a => {
+      current += parseInt(a.getAttribute('data-pts')) || 0;
+    });
+
+    const percent = max > 0 ? Math.round((current / max) * 100) : 0;
+    const sn = document.getElementById('scoreNum');
+    const vs = document.getElementById('verdictStatus');
+    
     document.getElementById('mainScoreCard').classList.add('revealed');
-    document.getElementById('scoreNum').innerText = '100%';
-    document.getElementById('verdictStatus').innerText = '✓ APTO';
-    document.getElementById('verdictStatus').style.color = 'var(--ok)';
+    sn.innerText = percent + '%';
+
+    if (percent >= 90) { 
+      vs.innerText = "✓ APTO"; 
+      vs.style.color = sn.style.color = "var(--ok)"; 
+    } else if (percent >= 70) { 
+      vs.innerText = "⚠ OBSERVADO"; 
+      vs.style.color = sn.style.color = "var(--brand)"; 
+    } else { 
+      vs.innerText = "✕ NO APTO"; 
+      vs.style.color = sn.style.color = "var(--no)"; 
+    }
   }
 
   async function finalizar() {
