@@ -22,7 +22,6 @@
     * { box-sizing: border-box; transition: all 0.3s ease; }
     body { margin: 0; background-color: var(--bg); color: var(--text); font-family: var(--font); padding: 20px 18px 140px; }
     .wrap { max-width: 850px; margin: 0 auto; }
-
     .brand { font-weight: 800; font-size: 22px; margin-bottom: 20px; letter-spacing: -1px; }
     .brand span { color: var(--brand); }
 
@@ -38,31 +37,52 @@
       pointer-events: none;
     }
     .score-card.revealed { opacity: 1; filter: blur(0); border-color: var(--brand); pointer-events: auto; }
-    
     .score-number { font-size: 64px; font-weight: 800; line-height: 1; margin: 5px 0; color: var(--muted); }
     .verdict-box { margin-top: 10px; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase; background: rgba(255,255,255,0.03); border: 1px solid var(--line); }
 
-    /* Meta-grid ajustado a 2 columnas por nivel */
     .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-    .meta-input { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+    
+    .meta-input { 
+      background: var(--card); 
+      border: 1px solid var(--line); 
+      border-radius: 12px; 
+      padding: 12px;
+      position: relative; /* Para la flecha */
+    }
+
+    /* Flecha personalizada */
+    .meta-input::after {
+      content: "▼";
+      font-size: 8px;
+      color: var(--brand);
+      position: absolute;
+      right: 15px;
+      bottom: 18px;
+      pointer-events: none;
+    }
+
     .meta-input label { display: block; font-size: 9px; color: var(--brand); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
     
     .meta-select, .meta-input input { 
       width: 100%; background: transparent; border: none; color: var(--text); 
-      font-weight: 700; outline: none; font-family: var(--font); font-size: 15px; appearance: none;
+      font-weight: 700; outline: none; font-family: var(--font); font-size: 15px; 
+      appearance: none; -webkit-appearance: none;
     }
-    input[type="date"] { color-scheme: dark; }
-    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; }
-    option { background: #1a1a1e; color: #fff; }
+
+    /* Estilo de las opciones en el desplegable */
+    select option {
+      background-color: #1a1a1e;
+      color: #fff;
+    }
 
     .section-block { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 25px; }
     .section-tag { color: var(--brand); font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
     .section-tag::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
     .check-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-    .check-row span { font-size: 14px; opacity: 0.9; max-width: 55%; }
+    .check-row span { font-size: 14px; opacity: 0.9; }
 
-    .selector { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+    .selector { display: flex; gap: 4px; }
     .pill { font-size: 9px; font-weight: 700; padding: 6px 12px; border-radius: 6px; background: var(--card-2); border: 1px solid var(--line); color: var(--muted); cursor: pointer; text-transform: uppercase; }
     .pill.active { background: var(--brand); color: #000; border-color: var(--brand); }
 
@@ -73,9 +93,8 @@
     .btn-submit.ready { background: var(--brand); color: #000; cursor: pointer; box-shadow: 0 8px 24px rgba(255,210,0,0.2); }
 
     @media (max-width: 600px) { 
-      .meta-grid { grid-template-columns: 1fr; }
+      .meta-grid { grid-template-columns: 1fr; } 
       .check-row { flex-direction: column; align-items: flex-start; gap: 10px; } 
-      .selector { justify-content: flex-start; width: 100%; } 
     }
   </style>
 </head>
@@ -122,13 +141,13 @@
   </div>
 
   <section class="section-block">
-    <div class="section-tag">1. Niveles (Rápido)</div>
+    <div class="section-tag">1. Niveles y Estado General</div>
     <div class="check-row"><span>Aceite motor</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
     <div class="check-row"><span>Refrigerante</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
-    <div class="check-row"><span>Líquido frenos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
+    <textarea class="textarea" id="obs_fugas" placeholder="Observaciones generales..."></textarea>
   </section>
 
-  <section class="section-block">
+<section class="section-block">
     <div class="section-tag">2. Fugas</div>
     <div class="check-row"><span>Fuga aceite motor</span><div class="selector"><div class="pill" data-pts="30" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
     <div class="check-row"><span>Fuga refrigerante</span><div class="selector"><div class="pill" data-pts="20" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
@@ -141,7 +160,7 @@
     <div class="check-row"><span>Arranque normal</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
     <div class="check-row"><span>Motor regula parejo</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
     <div class="check-row"><span>Ruidos anómalos</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
-    <textarea class="textarea" id="obs_fugas" placeholder="Observaciones de motor..."></textarea>
+    <textarea class="textarea" id="obs_motor" placeholder="Observaciones de motor..."></textarea>
   </section>
 
   <section class="section-block">
@@ -149,20 +168,18 @@
     <div class="check-row"><span>Pedal firme</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
     <div class="check-row"><span>Pastillas</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buenas</div><div class="pill" data-pts="5" onclick="sel(this)">Medias</div><div class="pill" data-pts="0" onclick="sel(this)">Bajas</div></div></div>
     <div class="check-row"><span>Presión Neumáticos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buena</div><div class="pill" data-pts="0" onclick="sel(this)">Mala</div></div></div>
-    <textarea class="textarea" id="obs_sueltos" placeholder="Otros defectos..."></textarea>
+    <textarea class="textarea" id="obs_otros" placeholder="Otros defectos..."></textarea>
   </section>
-
   <div class="action-bar">
     <button class="btn-submit" id="btnSubmit" onclick="finalizar()">Complete todos los puntos</button>
   </div>
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYfKDzd7cRE4hofAeND_MegYR95SDyxr1yPtsjwSlUoJOP9aZ_9ksT18LVBDkEv83QqA/exec';
+  const SCRIPT_URL = 'TU_URL_AQUI';
 
   window.onload = function() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('fecha_inspeccion').value = today;
+    document.getElementById('fecha_inspeccion').value = new Date().toISOString().split('T')[0];
   };
 
   function sel(e) {
@@ -175,12 +192,11 @@
     const total = document.querySelectorAll('.selector').length;
     const answered = document.querySelectorAll('.pill.active').length;
     const btn = document.getElementById('btnSubmit');
-    const fecha = document.getElementById('fecha_inspeccion').value;
-    const unidad = document.getElementById('unidad').value;
-    const km = document.getElementById('km').value;
-    const conductor = document.getElementById('conductor').value;
+    const u = document.getElementById('unidad').value;
+    const k = document.getElementById('km').value;
+    const c = document.getElementById('conductor').value;
 
-    if (answered === total && unidad && km && conductor && fecha) {
+    if (answered === total && u && k && c) {
       calculateScore();
       btn.disabled = false;
       btn.className = "btn-submit ready";
@@ -203,9 +219,9 @@
     const scoreNum = document.getElementById('scoreNum'), verdict = document.getElementById('verdictStatus');
     document.getElementById('mainScoreCard').classList.add('revealed');
     scoreNum.innerText = percent + '%';
-    if (percent >= 92) { verdict.innerText = "✓ APTO PARA SALIR"; verdict.style.color = "var(--ok)"; scoreNum.style.color = "var(--ok)"; }
-    else if (percent >= 75) { verdict.innerText = "⚠ APTO CON OBSERVACIÓN"; verdict.style.color = "var(--brand)"; scoreNum.style.color = "var(--brand)"; }
-    else { verdict.innerText = "✕ NO APTO - REPARACIÓN URGENTE"; verdict.style.color = "var(--no)"; scoreNum.style.color = "var(--no)"; }
+    if (percent >= 92) { verdict.innerText = "✓ APTO"; verdict.style.color = scoreNum.style.color = "var(--ok)"; }
+    else if (percent >= 75) { verdict.innerText = "⚠ OBSERVACIÓN"; verdict.style.color = scoreNum.style.color = "var(--brand)"; }
+    else { verdict.innerText = "✕ NO APTO"; verdict.style.color = scoreNum.style.color = "var(--no)"; }
   }
 
   async function finalizar() {
@@ -213,29 +229,22 @@
     btn.innerText = "🚀 ENVIANDO...";
     btn.disabled = true;
 
-    const respuestasDetalle = {};
-    document.querySelectorAll('.selector').forEach(s => {
-      respuestasDetalle[s.parentElement.querySelector('span').innerText] = s.querySelector('.pill.active').innerText;
-    });
-
     const data = {
-      fecha: document.getElementById('fecha_inspeccion').value + " " + new Date().toLocaleTimeString('it-IT'),
+      fecha: document.getElementById('fecha_inspeccion').value,
       unidad: document.getElementById('unidad').value,
       km: document.getElementById('km').value,
       conductor: document.getElementById('conductor').value,
       salud: document.getElementById('scoreNum').innerText,
       veredicto: document.getElementById('verdictStatus').innerText,
-      obs_fugas: document.getElementById('obs_fugas').value,
-      obs_otros: document.getElementById('obs_sueltos').value,
-      detalle_checks: JSON.stringify(respuestasDetalle)
+      obs_fugas: document.getElementById('obs_fugas').value
     };
 
     try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-      alert("✅ Registro guardado exitosamente.");
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+      alert("✅ Registro guardado.");
       location.reload(); 
     } catch (e) {
-      alert("❌ Error de conexión.");
+      alert("❌ Error.");
       btn.disabled = false;
       btn.innerText = "REINTENTAR";
     }
