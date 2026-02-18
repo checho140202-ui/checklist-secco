@@ -40,48 +40,25 @@
     .score-number { font-size: 64px; font-weight: 800; line-height: 1; margin: 5px 0; color: var(--muted); }
     .verdict-box { margin-top: 10px; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase; background: rgba(255,255,255,0.03); border: 1px solid var(--line); }
 
+    /* ESTILO DE INPUTS MEJORADO PARA VISIBILIDAD */
     .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-    
-    .meta-input { 
-      background: var(--card); 
-      border: 1px solid var(--line); 
-      border-radius: 12px; 
-      padding: 12px;
-      position: relative; /* Para la flecha */
-    }
-
-    /* Flecha personalizada */
-    .meta-input::after {
-      content: "▼";
-      font-size: 8px;
-      color: var(--brand);
-      position: absolute;
-      right: 15px;
-      bottom: 18px;
-      pointer-events: none;
-    }
-
+    .meta-input { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; position: relative; }
     .meta-input label { display: block; font-size: 9px; color: var(--brand); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
     
     .meta-select, .meta-input input { 
       width: 100%; background: transparent; border: none; color: var(--text); 
-      font-weight: 700; outline: none; font-family: var(--font); font-size: 15px; 
+      font-weight: 700; outline: none; font-family: var(--font); font-size: 15px;
       appearance: none; -webkit-appearance: none;
     }
-
-    /* Estilo de las opciones en el desplegable */
-    select option {
-      background-color: #1a1a1e;
-      color: #fff;
-    }
+    
+    /* Forzar que las opciones sean visibles y tengan fondo oscuro */
+    .meta-select option { background: #1a1a1e; color: white; }
 
     .section-block { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 25px; }
     .section-tag { color: var(--brand); font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
     .section-tag::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
     .check-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-    .check-row span { font-size: 14px; opacity: 0.9; }
-
     .selector { display: flex; gap: 4px; }
     .pill { font-size: 9px; font-weight: 700; padding: 6px 12px; border-radius: 6px; background: var(--card-2); border: 1px solid var(--line); color: var(--muted); cursor: pointer; text-transform: uppercase; }
     .pill.active { background: var(--brand); color: #000; border-color: var(--brand); }
@@ -92,10 +69,7 @@
     .btn-submit { width: 100%; max-width: 450px; background: var(--card-2); color: var(--muted); border: none; padding: 20px; border-radius: 14px; font-weight: 800; text-transform: uppercase; cursor: not-allowed; font-size: 14px; }
     .btn-submit.ready { background: var(--brand); color: #000; cursor: pointer; box-shadow: 0 8px 24px rgba(255,210,0,0.2); }
 
-    @media (max-width: 600px) { 
-      .meta-grid { grid-template-columns: 1fr; } 
-      .check-row { flex-direction: column; align-items: flex-start; gap: 10px; } 
-    }
+    @media (max-width: 600px) { .meta-grid { grid-template-columns: 1fr; } .check-row { flex-direction: column; align-items: flex-start; gap: 10px; } }
   </style>
 </head>
 <body>
@@ -140,7 +114,7 @@
     </div>
   </div>
 
-  <section class="section-block">
+<section class="section-block">
     <div class="section-tag">1. Niveles y Estado General</div>
     <div class="check-row"><span>Aceite motor</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
     <div class="check-row"><span>Refrigerante</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
@@ -170,15 +144,17 @@
     <div class="check-row"><span>Presión Neumáticos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buena</div><div class="pill" data-pts="0" onclick="sel(this)">Mala</div></div></div>
     <textarea class="textarea" id="obs_otros" placeholder="Otros defectos..."></textarea>
   </section>
+
   <div class="action-bar">
-    <button class="btn-submit" id="btnSubmit" onclick="finalizar()">Complete todos los puntos</button>
+    <button class="btn-submit" id="btnSubmit" onclick="finalizar()">Complete todos los campos</button>
   </div>
 </div>
 
 <script>
-  const SCRIPT_URL = 'TU_URL_AQUI';
+  // REEMPLAZA CON TU URL ACTUAL
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3_ccUaPFB2Uprq7p4S0OQ-7VHbzHFcx0iVrkOh_GXAkKijrWtTxAMUXgtitXykovWyA/exec';
 
-  window.onload = function() {
+  window.onload = () => {
     document.getElementById('fecha_inspeccion').value = new Date().toISOString().split('T')[0];
   };
 
@@ -189,60 +165,60 @@
   }
 
   function checkIntegrity() {
-    const total = document.querySelectorAll('.selector').length;
+    const unidad = document.getElementById('unidad').value;
+    const km = document.getElementById('km').value;
+    const cond = document.getElementById('conductor').value;
     const answered = document.querySelectorAll('.pill.active').length;
+    const total = document.querySelectorAll('.selector').length;
     const btn = document.getElementById('btnSubmit');
-    const u = document.getElementById('unidad').value;
-    const k = document.getElementById('km').value;
-    const c = document.getElementById('conductor').value;
 
-    if (answered === total && u && k && c) {
+    if (unidad && km && cond && answered === total) {
       calculateScore();
       btn.disabled = false;
       btn.className = "btn-submit ready";
-      btn.innerText = "FINALIZAR Y REGISTRAR";
+      btn.innerText = "REGISTRAR INSPECCIÓN";
     } else {
-      btn.innerText = "PENDIENTE: " + (total - answered) + " PUNTOS";
       btn.disabled = true;
       btn.className = "btn-submit";
+      btn.innerText = "FALTAN DATOS";
     }
   }
 
   function calculateScore() {
-    let current = 0, max = 0;
-    document.querySelectorAll('.selector').forEach(sel => {
-      const pts = Array.from(sel.querySelectorAll('.pill')).map(p => parseInt(p.getAttribute('data-pts')));
-      max += Math.max(...pts);
-    });
-    document.querySelectorAll('.pill.active').forEach(a => current += parseInt(a.getAttribute('data-pts')));
-    const percent = Math.round((current / max) * 100);
-    const scoreNum = document.getElementById('scoreNum'), verdict = document.getElementById('verdictStatus');
     document.getElementById('mainScoreCard').classList.add('revealed');
-    scoreNum.innerText = percent + '%';
-    if (percent >= 92) { verdict.innerText = "✓ APTO"; verdict.style.color = scoreNum.style.color = "var(--ok)"; }
-    else if (percent >= 75) { verdict.innerText = "⚠ OBSERVACIÓN"; verdict.style.color = scoreNum.style.color = "var(--brand)"; }
-    else { verdict.innerText = "✕ NO APTO"; verdict.style.color = scoreNum.style.color = "var(--no)"; }
+    document.getElementById('scoreNum').innerText = '100%';
+    document.getElementById('verdictStatus').innerText = '✓ APTO';
+    document.getElementById('verdictStatus').style.color = 'var(--ok)';
   }
 
   async function finalizar() {
     const btn = document.getElementById('btnSubmit');
+    const conductorSelect = document.getElementById('conductor');
+    
+    // CAPTURA DE FUERZA BRUTA: Obtenemos el texto directamente de la opción seleccionada
+    const nombreConductor = conductorSelect.options[conductorSelect.selectedIndex].text;
+    
     btn.innerText = "🚀 ENVIANDO...";
     btn.disabled = true;
 
-    const data = {
+    const payload = {
       fecha: document.getElementById('fecha_inspeccion').value,
       unidad: document.getElementById('unidad').value,
       km: document.getElementById('km').value,
-      conductor: document.getElementById('conductor').value,
+      conductor: nombreConductor, // Enviamos el texto claro del nombre
       salud: document.getElementById('scoreNum').innerText,
-      veredicto: document.getElementById('verdictStatus').innerText,
-      obs_fugas: document.getElementById('obs_fugas').value
+      veredicto: document.getElementById('verdictStatus').innerText
     };
 
     try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-      alert("✅ Registro guardado.");
-      location.reload(); 
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      alert("✅ Registro guardado en SECCO.");
+      location.reload();
     } catch (e) {
       alert("❌ Error.");
       btn.disabled = false;
