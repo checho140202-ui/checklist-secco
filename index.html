@@ -1,37 +1,238 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SECCO | Inspección Técnica Integral</title>
+  <style>
+    :root {
+      --bg: #0b0b0e;
+      --card: rgba(255,255,255,.06);
+      --card-2: rgba(255,255,255,.09);
+      --line: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --brand: #ffd200;
+      --ok: #22c55e;
+      --no: #ef4444;
+      --radius: 16px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    * { box-sizing: border-box; transition: all 0.3s ease; }
+    body { margin: 0; background-color: var(--bg); color: var(--text); font-family: var(--font); padding: 20px 18px 140px; }
+    .wrap { max-width: 850px; margin: 0 auto; }
+
+    .brand { font-weight: 800; font-size: 22px; margin-bottom: 20px; letter-spacing: -1px; }
+    .brand span { color: var(--brand); }
+
+    .score-card {
+      background: linear-gradient(145deg, var(--card-2), rgba(0,0,0,0.4));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 30px;
+      margin-bottom: 32px;
+      text-align: center;
+      opacity: 0.1;
+      filter: blur(10px);
+      pointer-events: none;
+    }
+    .score-card.revealed { opacity: 1; filter: blur(0); border-color: var(--brand); pointer-events: auto; }
+    
+    .score-number { font-size: 64px; font-weight: 800; line-height: 1; margin: 5px 0; color: var(--muted); }
+    .verdict-box { margin-top: 10px; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase; background: rgba(255,255,255,0.03); border: 1px solid var(--line); }
+
+    /* Meta-grid ajustado a 2 columnas por nivel */
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+    .meta-input { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+    .meta-input label { display: block; font-size: 9px; color: var(--brand); text-transform: uppercase; font-weight: 800; margin-bottom: 4px; }
+    
+    .meta-select, .meta-input input { 
+      width: 100%; background: transparent; border: none; color: var(--text); 
+      font-weight: 700; outline: none; font-family: var(--font); font-size: 15px; appearance: none;
+    }
+    input[type="date"] { color-scheme: dark; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.5; }
+    option { background: #1a1a1e; color: #fff; }
+
+    .section-block { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 25px; }
+    .section-tag { color: var(--brand); font-weight: 800; font-size: 10px; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+    .section-tag::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+    .check-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .check-row span { font-size: 14px; opacity: 0.9; max-width: 55%; }
+
+    .selector { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill { font-size: 9px; font-weight: 700; padding: 6px 12px; border-radius: 6px; background: var(--card-2); border: 1px solid var(--line); color: var(--muted); cursor: pointer; text-transform: uppercase; }
+    .pill.active { background: var(--brand); color: #000; border-color: var(--brand); }
+
+    .textarea { width: 100%; background: rgba(0,0,0,0.25); border: 1px solid var(--line); border-radius: 10px; padding: 12px; color: var(--text); margin-top: 10px; font-size: 13px; font-family: var(--font); outline: none; resize: vertical; min-height: 60px; }
+
+    .action-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 25px; background: rgba(11, 11, 14, 0.95); backdrop-filter: blur(15px); border-top: 1px solid var(--line); display: flex; justify-content: center; z-index: 1000; }
+    .btn-submit { width: 100%; max-width: 450px; background: var(--card-2); color: var(--muted); border: none; padding: 20px; border-radius: 14px; font-weight: 800; text-transform: uppercase; cursor: not-allowed; font-size: 14px; }
+    .btn-submit.ready { background: var(--brand); color: #000; cursor: pointer; box-shadow: 0 8px 24px rgba(255,210,0,0.2); }
+
+    @media (max-width: 600px) { 
+      .meta-grid { grid-template-columns: 1fr; }
+      .check-row { flex-direction: column; align-items: flex-start; gap: 10px; } 
+      .selector { justify-content: flex-start; width: 100%; } 
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="brand">SEC<span>CO</span></div>
+
+  <div class="score-card" id="mainScoreCard">
+    <div class="score-label">Evaluación del Sistema</div>
+    <div class="score-number" id="scoreNum">--%</div>
+    <div id="verdictStatus" class="verdict-box">Inspección Incompleta</div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-input">
+      <label>Fecha de Inspección</label>
+      <input type="date" id="fecha_inspeccion" onchange="checkIntegrity()">
+    </div>
+    <div class="meta-input">
+      <label>Unidad / Patente</label>
+      <select class="meta-select" id="unidad" onchange="checkIntegrity()">
+        <option value="" disabled selected>Seleccionar...</option>
+        <option value="JLLJ99-Berlingo">JLLJ99-Berlingo</option>
+        <option value="KLVS61-Berlingo">KLVS61-Berlingo</option>
+        <option value="FGGB68-Partner">FGGB68-Partner</option>
+        <option value="NB5462-Swift">NB5462-Swift</option>
+      </select>
+    </div>
+    <div class="meta-input">
+      <label>Kilometraje</label>
+      <input type="number" id="km" placeholder="000000" oninput="checkIntegrity()">
+    </div>
+    <div class="meta-input">
+      <label>Mecánico / Conductor</label>
+      <select class="meta-select" id="conductor" onchange="checkIntegrity()">
+        <option value="" disabled selected>Seleccionar...</option>
+        <option value="Maverick Novoa">Maverick Novoa</option>
+        <option value="Felipe Torres">Felipe Torres</option>
+        <option value="Héctor Vejar">Héctor Vejar</option>
+        <option value="Fernando Leal">Fernando Leal</option>
+      </select>
+    </div>
+  </div>
+
+  <section class="section-block">
+    <div class="section-tag">1. Niveles (Rápido)</div>
+    <div class="check-row"><span>Aceite motor</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
+    <div class="check-row"><span>Refrigerante</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
+    <div class="check-row"><span>Líquido frenos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">OK</div><div class="pill" data-pts="0" onclick="sel(this)">Bajo</div></div></div>
+  </section>
+
+  <section class="section-block">
+    <div class="section-tag">2. Fugas</div>
+    <div class="check-row"><span>Fuga aceite motor</span><div class="selector"><div class="pill" data-pts="30" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <div class="check-row"><span>Fuga refrigerante</span><div class="selector"><div class="pill" data-pts="20" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <div class="check-row"><span>Fuga caja/transmisión</span><div class="selector"><div class="pill" data-pts="30" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <textarea class="textarea" id="obs_fugas" placeholder="Observaciones de fugas..."></textarea>
+  </section>
+
+  <section class="section-block">
+    <div class="section-tag">3. Motor</div>
+    <div class="check-row"><span>Arranque normal</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
+    <div class="check-row"><span>Motor regula parejo</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
+    <div class="check-row"><span>Ruidos anómalos</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">No</div><div class="pill" data-pts="0" onclick="sel(this)">Sí</div></div></div>
+    <textarea class="textarea" id="obs_fugas" placeholder="Observaciones de motor..."></textarea>
+  </section>
+
+  <section class="section-block">
+    <div class="section-tag">4. Frenos y Otros</div>
+    <div class="check-row"><span>Pedal firme</span><div class="selector"><div class="pill" data-pts="15" onclick="sel(this)">Sí</div><div class="pill" data-pts="0" onclick="sel(this)">No</div></div></div>
+    <div class="check-row"><span>Pastillas</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buenas</div><div class="pill" data-pts="5" onclick="sel(this)">Medias</div><div class="pill" data-pts="0" onclick="sel(this)">Bajas</div></div></div>
+    <div class="check-row"><span>Presión Neumáticos</span><div class="selector"><div class="pill" data-pts="10" onclick="sel(this)">Buena</div><div class="pill" data-pts="0" onclick="sel(this)">Mala</div></div></div>
+    <textarea class="textarea" id="obs_sueltos" placeholder="Otros defectos..."></textarea>
+  </section>
+
+  <div class="action-bar">
+    <button class="btn-submit" id="btnSubmit" onclick="finalizar()">Complete todos los puntos</button>
+  </div>
+</div>
+
 <script>
-  // Asegúrate de poner tu URL aquí
-  const SCRIPT_URL = 'TU_URL_DE_APPS_SCRIPT'; 
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYfKDzd7cRE4hofAeND_MegYR95SDyxr1yPtsjwSlUoJOP9aZ_9ksT18LVBDkEv83QqA/exec';
+
+  window.onload = function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha_inspeccion').value = today;
+  };
+
+  function sel(e) {
+    e.parentElement.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    e.classList.add('active');
+    checkIntegrity();
+  }
+
+  function checkIntegrity() {
+    const total = document.querySelectorAll('.selector').length;
+    const answered = document.querySelectorAll('.pill.active').length;
+    const btn = document.getElementById('btnSubmit');
+    const fecha = document.getElementById('fecha_inspeccion').value;
+    const unidad = document.getElementById('unidad').value;
+    const km = document.getElementById('km').value;
+    const conductor = document.getElementById('conductor').value;
+
+    if (answered === total && unidad && km && conductor && fecha) {
+      calculateScore();
+      btn.disabled = false;
+      btn.className = "btn-submit ready";
+      btn.innerText = "FINALIZAR Y REGISTRAR";
+    } else {
+      btn.innerText = "PENDIENTE: " + (total - answered) + " PUNTOS";
+      btn.disabled = true;
+      btn.className = "btn-submit";
+    }
+  }
+
+  function calculateScore() {
+    let current = 0, max = 0;
+    document.querySelectorAll('.selector').forEach(sel => {
+      const pts = Array.from(sel.querySelectorAll('.pill')).map(p => parseInt(p.getAttribute('data-pts')));
+      max += Math.max(...pts);
+    });
+    document.querySelectorAll('.pill.active').forEach(a => current += parseInt(a.getAttribute('data-pts')));
+    const percent = Math.round((current / max) * 100);
+    const scoreNum = document.getElementById('scoreNum'), verdict = document.getElementById('verdictStatus');
+    document.getElementById('mainScoreCard').classList.add('revealed');
+    scoreNum.innerText = percent + '%';
+    if (percent >= 92) { verdict.innerText = "✓ APTO PARA SALIR"; verdict.style.color = "var(--ok)"; scoreNum.style.color = "var(--ok)"; }
+    else if (percent >= 75) { verdict.innerText = "⚠ APTO CON OBSERVACIÓN"; verdict.style.color = "var(--brand)"; scoreNum.style.color = "var(--brand)"; }
+    else { verdict.innerText = "✕ NO APTO - REPARACIÓN URGENTE"; verdict.style.color = "var(--no)"; scoreNum.style.color = "var(--no)"; }
+  }
 
   async function finalizar() {
     const btn = document.getElementById('btnSubmit');
-    btn.innerText = "🚀 REGISTRANDO EN SISTEMA...";
+    btn.innerText = "🚀 ENVIANDO...";
     btn.disabled = true;
 
-    // Capturamos todos los datos del formulario
+    const respuestasDetalle = {};
+    document.querySelectorAll('.selector').forEach(s => {
+      respuestasDetalle[s.parentElement.querySelector('span').innerText] = s.querySelector('.pill.active').innerText;
+    });
+
     const data = {
-      fecha: document.getElementById('fecha_inspeccion').value,
+      fecha: document.getElementById('fecha_inspeccion').value + " " + new Date().toLocaleTimeString('it-IT'),
       unidad: document.getElementById('unidad').value,
       km: document.getElementById('km').value,
       conductor: document.getElementById('conductor').value,
       salud: document.getElementById('scoreNum').innerText,
       veredicto: document.getElementById('verdictStatus').innerText,
-      
-      // Observaciones detalladas por sección
       obs_fugas: document.getElementById('obs_fugas').value,
-      obs_motor: document.getElementById('obs_motor').value,
-      obs_otros: document.getElementById('obs_otros').value
+      obs_otros: document.getElementById('obs_sueltos').value,
+      detalle_checks: JSON.stringify(respuestasDetalle)
     };
 
     try {
-      // Enviamos a Google Sheets
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      
-      alert("✅ Registro guardado exitosamente en SECCO.");
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      alert("✅ Registro guardado exitosamente.");
       location.reload(); 
     } catch (e) {
       alert("❌ Error de conexión.");
@@ -40,3 +241,5 @@
     }
   }
 </script>
+</body>
+</html>
