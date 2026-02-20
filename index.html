@@ -159,7 +159,7 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfKeLkqpeGB1TkQwwAjA_FPTBJG1KgBBewO_WTWTe5E_QP8djhxOpUBDZkRlw4SowoCQ/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbztTc_BMlBVQ-meVnh20II2vWHjGr5MgJAAbqqbRAmjA8n_JjfnzyHJ3l88SexkBntp_Q/exec';
   let userVerdict = "";
 
   // FUNCIÓN PARA FECHA ACTUAL AUTOMÁTICA
@@ -213,31 +213,56 @@
     }
   }
 
-  async function finalizar() {
-    const btn = document.getElementById('btnSubmit');
-    btn.innerText = "GUARDANDO...";
-    btn.disabled = true;
+async function finalizar() {
+  const btn = document.getElementById('btnSubmit');
+  const originalText = btn.innerText;
+  
+  btn.innerText = "ENVIANDO REPORTE...";
+  btn.disabled = true;
 
-    const payload = {
-      fecha: document.getElementById('fecha_inspeccion').value,
-      unidad: document.getElementById('unidad').value,
-      km: document.getElementById('km').value,
-      conductor: document.getElementById('conductor').value,
-      salud: document.getElementById('scoreNum').innerText,
-      veredicto: userVerdict,
-      comentarios: document.getElementById('obs').value
-    };
+  // 1. Recolectar respuestas de los botones (Pills)
+  // Esto crea un array con los textos "OK", "Bajo", "Sí", "No", etc.
+  const respuestas = [];
+  document.querySelectorAll('.selector').forEach(container => {
+    const activePill = container.querySelector('.pill.active');
+    respuestas.push(activePill ? activePill.innerText : "N/A");
+  });
 
-    try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-      alert("Registro completado.");
-      location.reload();
-    } catch (e) {
-      alert("Error.");
-      btn.disabled = false;
-      btn.innerText = "REINTENTAR";
-    }
+  // 2. Armar el JSON con todos los campos
+  const payload = {
+    fecha: document.getElementById('fecha_inspeccion').value,
+    unidad: document.getElementById('unidad').value,
+    km: document.getElementById('km').value,
+    conductor: document.getElementById('conductor').value,
+    salud: document.getElementById('scoreNum').innerText,
+    veredicto: userVerdict,
+    respuestas_checklist: respuestas, // Aquí van los 10 items del checklist
+    obs_niveles: document.getElementById('obs_niveles').value,
+    obs_fugas: document.getElementById('obs_fugas').value,
+    obs_motor: document.getElementById('obs_motor').value,
+    obs_otros: document.getElementById('obs_otros').value,
+    obs_final: document.getElementById('obs').value
+  };
+
+  try {
+    // Enviamos a Google Apps Script
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Importante para evitar bloqueos de navegador
+      body: JSON.stringify(payload)
+    });
+
+    // Éxito
+    alert("✅ ¡Inspección guardada correctamente!");
+    location.reload(); // Recarga la página para limpiar el formulario
+
+  } catch (error) {
+    console.error("Error:", error);
+    alert("❌ Hubo un error al enviar. Revisa tu conexión.");
+    btn.disabled = false;
+    btn.innerText = "REINTENTAR";
   }
+}
 </script>
 </body>
 </html>
