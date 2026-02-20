@@ -244,21 +244,24 @@ async function finalizar() {
     obs_final: document.getElementById('obs').value
   };
 
-  try {
-    // Enviamos a Google Apps Script
+try {
     await fetch(SCRIPT_URL, {
       method: 'POST',
-      mode: 'no-cors', // Importante para evitar bloqueos de navegador
+      mode: 'no-cors', 
+      cache: 'no-cache', // Evita que GitHub guarde versiones viejas
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8' // Esto ayuda a Google a digerir el JSON desde GitHub
+      },
       body: JSON.stringify(payload)
     });
 
-    // Éxito
-    alert("✅ ¡Inspección guardada correctamente!");
-    location.reload(); // Recarga la página para limpiar el formulario
+    // En modo no-cors no podemos leer la respuesta, pero si no saltó al catch, se envió
+    alert("✅ ¡Inspección enviada! Revisa tu planilla.");
+    location.reload();
 
   } catch (error) {
-    console.error("Error:", error);
-    alert("❌ Hubo un error al enviar. Revisa tu conexión.");
+    console.error("Error detallado:", error);
+    alert("❌ Error: " + error.message);
     btn.disabled = false;
     btn.innerText = "REINTENTAR";
   }
